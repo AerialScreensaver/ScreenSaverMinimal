@@ -8,6 +8,7 @@
 
 
 import ScreenSaver
+import os.log
 
 class ScreenSaverMinimalView : ScreenSaverView {
     
@@ -15,8 +16,13 @@ class ScreenSaverMinimalView : ScreenSaverView {
     var isPreviewBug: Bool = false
     var originalIsPreview: Bool = false
     
+    private var instanceNumber: Int
+    private let logger = Logger(subsystem: "net.aerialscreensaver.ScreenSaverMinimal", category: "ScreenSaver")
+    
     override init(frame: NSRect, isPreview: Bool) {
-
+        // Need to set instanceNumber before super.init
+        instanceNumber = 0 // Temporary value
+        
         var preview = isPreview
         originalIsPreview = isPreview
         
@@ -39,32 +45,46 @@ class ScreenSaverMinimalView : ScreenSaverView {
         }
         
         super.init(frame: frame, isPreview: preview)!
+        
+        // Now register with the tracker after super.init
+        instanceNumber = InstanceTracker.shared.registerInstance(self)
+        logger.info("init: \(self.instanceNumber)")
     }
     
     required init?(coder aDecoder: NSCoder) {
+        instanceNumber = 0
         super.init(coder: aDecoder)
+        instanceNumber = InstanceTracker.shared.registerInstance(self)
+        logger.info("init(coder:): \(self.instanceNumber)")
     }
     
     
     override var hasConfigureSheet: Bool {
+        logger.info("hasConfigureSheet: \(self.instanceNumber)")
         return true
     }
     
     override var configureSheet: NSWindow? {
+        logger.info("configureSheet: \(self.instanceNumber)")
         return sheetController.window
     }
 
     
     override func startAnimation() {
+        logger.info("startAnimation: \(self.instanceNumber)")
         super.startAnimation()
     }
     
     override func stopAnimation() {
+        logger.info("stopAnimation: \(self.instanceNumber)")
         super.stopAnimation()
     }
     
 
     override func draw(_ rect: NSRect) {
+        if Preferences.logDrawCalls {
+            logger.info("draw: \(self.instanceNumber)")
+        }
         // Fill entire rect with border color
         Preferences.canvasColor.nsColor.set()
         NSBezierPath(rect: bounds).fill()
@@ -91,6 +111,20 @@ class ScreenSaverMinimalView : ScreenSaverView {
         
         previewText.draw(at: NSPoint(x: xPosition, y: yPosition), withAttributes: attributes)
         
+        // Draw instance info in top right corner
+        let totalInstances = InstanceTracker.shared.totalInstances
+        let instanceText = "Instance \(instanceNumber)/\(totalInstances)"
+        let instanceAttributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.boldSystemFont(ofSize: 48),
+            .foregroundColor: NSColor.white
+        ]
+        
+        let instanceTextSize = instanceText.size(withAttributes: instanceAttributes)
+        let instanceXPosition = bounds.width - instanceTextSize.width - (bounds.width * 0.1)
+        let instanceYPosition = bounds.height - borderWidth - instanceTextSize.height - 20
+        
+        instanceText.draw(at: NSPoint(x: instanceXPosition, y: instanceYPosition), withAttributes: instanceAttributes)
+        
         // Only show Radar# FB7486243 on macOS versions before 26.0
         if #unavailable(macOS 26.0) {
             // Draw debug text in bottom left
@@ -109,6 +143,9 @@ class ScreenSaverMinimalView : ScreenSaverView {
     }
     
     override func animateOneFrame() {
+        if Preferences.logAnimateOneFrameCalls {
+            logger.info("animateOneFrame: \(self.instanceNumber)")
+        }
         window!.disableFlushing()
         
         window!.enableFlushing()

@@ -13,6 +13,15 @@ import OSLog
 struct Preferences {
     @Storage(key: "CanvasColor", defaultValue: Color(nsColor: NSColor(red: 1, green: 0.0, blue: 0.5, alpha: 1.0)))
     static var canvasColor: Color
+    
+    @SimpleStorage(key: "LogDrawCalls", defaultValue: false)
+    static var logDrawCalls: Bool
+    
+    @SimpleStorage(key: "LogAnimateOneFrameCalls", defaultValue: false)
+    static var logAnimateOneFrameCalls: Bool
+    
+    @SimpleStorage(key: "EnableExitFixOnWillStop", defaultValue: false)
+    static var enableExitFixOnWillStop: Bool
 }
 
 // MARK: - Helpers

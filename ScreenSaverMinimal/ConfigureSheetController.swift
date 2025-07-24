@@ -16,23 +16,47 @@ class ConfigureSheetController : NSObject {
     @IBOutlet var window: NSWindow?
     @IBOutlet var canvasColorWell: NSColorWell!
 
-
+    @IBOutlet weak var logDrawCalls: NSSwitch!
+    
+    @IBOutlet weak var logAnimateOneFrame: NSSwitch!
+    @IBOutlet weak var logExitOnWillStop: NSSwitch!
+    
     override init() {
         super.init()
         let myBundle = Bundle(for: ConfigureSheetController.self)
         myBundle.loadNibNamed("ConfigureSheet", owner: self, topLevelObjects: nil)
     }
 
+    @IBAction func logDrawCallChange(_ sender: NSSwitch) {
+        Preferences.logDrawCalls = sender.state == .on
+    }
+    
+    @IBAction func logAnimateOneFrameChange(_ sender: NSSwitch) {
+        Preferences.logAnimateOneFrameCalls = sender.state == .on
+    }
+    
+    @IBAction func exitOnWillStopChange(_ sender: NSSwitch) {
+        Preferences.enableExitFixOnWillStop = sender.state == .on
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
         // Do your UI init here!
         canvasColorWell.color = Preferences.canvasColor.nsColor
+        
+        // Initialize switch values from preferences
+        logDrawCalls.state = Preferences.logDrawCalls ? .on : .off
+        logAnimateOneFrame.state = Preferences.logAnimateOneFrameCalls ? .on : .off
+        logExitOnWillStop.state = Preferences.enableExitFixOnWillStop ? .on : .off
     }
 
     @IBAction func updateDefaults(_ sender: AnyObject) {
         Preferences.canvasColor = Color(nsColor: canvasColorWell!.color)
     }
+    
+    
+    
    
     @IBAction func closeConfigureSheet(_ sender: AnyObject) {
         // Remember to close anything else first

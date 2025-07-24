@@ -19,6 +19,8 @@
 		ACD891891DC38B790019C16F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACD891871DC38B790019C16F /* MainMenu.xib */; };
 		ACD8918E1DC38C4B0019C16F /* ScreenSaverMinimalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */; };
 		ACD8918F1DC38C4B0019C16F /* ConfigureSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034D858F1B64F0AD00D2EF6B /* ConfigureSheetController.swift */; };
+		F0EAC97A2E329E14008427CE /* InstanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EAC9792E329E14008427CE /* InstanceTracker.swift */; };
+		F0EAC97B2E329E14008427CE /* InstanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EAC9792E329E14008427CE /* InstanceTracker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +29,6 @@
 		03A4851C1B644145008A2D6A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenSaverMinimalView.swift; sourceTree = "<group>"; };
 		03D29C1124A262B400D61A02 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ConfigureSheet.xib; sourceTree = "<group>"; };
-		03D29C1324A2632900D61A02 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/ConfigureSheet.xib; sourceTree = "<group>"; };
 		03F3BD4224A2462500F7CD7A /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		03F9545D1B695E0A00E47ED7 /* thumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumbnail.png; sourceTree = "<group>"; };
 		ACD891811DC38B790019C16F /* SaverTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SaverTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,6 +36,7 @@
 		ACD891851DC38B790019C16F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD891881DC38B790019C16F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		ACD8918A1DC38B790019C16F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0EAC9792E329E14008427CE /* InstanceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceTracker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				03F3BD4224A2462500F7CD7A /* Preferences.swift */,
+				F0EAC9792E329E14008427CE /* InstanceTracker.swift */,
 				03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */,
 				034D858F1B64F0AD00D2EF6B /* ConfigureSheetController.swift */,
 				03D29C1224A262B400D61A02 /* ConfigureSheet.xib */,
@@ -221,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03A485271B644187008A2D6A /* ScreenSaverMinimalView.swift in Sources */,
+				F0EAC97B2E329E14008427CE /* InstanceTracker.swift in Sources */,
 				03F3BD4324A2462600F7CD7A /* Preferences.swift in Sources */,
 				034D85901B64F0AD00D2EF6B /* ConfigureSheetController.swift in Sources */,
 			);
@@ -231,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ACD8918E1DC38C4B0019C16F /* ScreenSaverMinimalView.swift in Sources */,
+				F0EAC97A2E329E14008427CE /* InstanceTracker.swift in Sources */,
 				ACD8918F1DC38C4B0019C16F /* ConfigureSheetController.swift in Sources */,
 				03F3BD4424A2462600F7CD7A /* Preferences.swift in Sources */,
 				03D29C1024A262B400D61A02 /* ConfigureSheet.xib in Sources */,
@@ -245,7 +250,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				03D29C1124A262B400D61A02 /* en */,
-				03D29C1324A2632900D61A02 /* fr */,
 			);
 			name = ConfigureSheet.xib;
 			sourceTree = "<group>";
@@ -386,7 +390,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				PRODUCT_BUNDLE_IDENTIFIER = net.mirkofetter.ScreenSaverMinimal;
+				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.ScreenSaverMinimal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -408,7 +412,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				PRODUCT_BUNDLE_IDENTIFIER = net.mirkofetter.ScreenSaverMinimal;
+				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.ScreenSaverMinimal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -434,7 +438,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				PRODUCT_BUNDLE_IDENTIFIER = net.mirkofetter.SaverTest;
+				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.SaverTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -458,7 +462,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				PRODUCT_BUNDLE_IDENTIFIER = net.mirkofetter.SaverTest;
+				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.SaverTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
