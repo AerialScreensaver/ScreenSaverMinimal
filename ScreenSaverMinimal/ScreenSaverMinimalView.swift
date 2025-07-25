@@ -17,7 +17,15 @@ class ScreenSaverMinimalView : ScreenSaverView {
     var originalIsPreview: Bool = false
     
     private var instanceNumber: Int
-    private let logger = Logger(subsystem: "net.aerialscreensaver.ScreenSaverMinimal", category: "ScreenSaver")
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "ScreenSaverMinimal", category: "ScreenSaver")
+    private var willStopObserver: NSObjectProtocol?
+    
+    private func getVersionString() -> String {
+        let bundle = Bundle(for: type(of: self))
+        let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let buildDate = bundle.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+        return "v\(version) (\(buildDate))"
+    }
     
     override init(frame: NSRect, isPreview: Bool) {
         // Need to set instanceNumber before super.init
@@ -48,42 +56,66 @@ class ScreenSaverMinimalView : ScreenSaverView {
         
         // Now register with the tracker after super.init
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        logger.info("init: \(self.instanceNumber)")
+        logger.info("init: \(self.instanceNumber, privacy: .public)")
+        
+        // Register for willStop notification if the preference is enabled
+        if Preferences.enableExitFixOnWillStop {
+            willStopObserver = DistributedNotificationCenter.default().addObserver(
+                forName: NSNotification.Name("com.apple.screensaver.willstop"),
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.handleWillStopNotification()
+            }
+            logger.info("init: \(self.instanceNumber, privacy: .public) - Registered for willStop notification")
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
         instanceNumber = 0
         super.init(coder: aDecoder)
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        logger.info("init(coder:): \(self.instanceNumber)")
+        logger.info("init(coder:): \(self.instanceNumber, privacy: .public)")
+        
+        // Register for willStop notification if the preference is enabled
+        if Preferences.enableExitFixOnWillStop {
+            willStopObserver = DistributedNotificationCenter.default().addObserver(
+                forName: NSNotification.Name("com.apple.screensaver.willstop"),
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.handleWillStopNotification()
+            }
+            logger.info("init(coder:): \(self.instanceNumber, privacy: .public) - Registered for willStop notification")
+        }
     }
     
     
     override var hasConfigureSheet: Bool {
-        logger.info("hasConfigureSheet: \(self.instanceNumber)")
+        logger.info("hasConfigureSheet: \(self.instanceNumber, privacy: .public)")
         return true
     }
     
     override var configureSheet: NSWindow? {
-        logger.info("configureSheet: \(self.instanceNumber)")
+        logger.info("configureSheet: \(self.instanceNumber, privacy: .public)")
         return sheetController.window
     }
 
     
     override func startAnimation() {
-        logger.info("startAnimation: \(self.instanceNumber)")
+        logger.info("startAnimation: \(self.instanceNumber, privacy: .public)")
         super.startAnimation()
     }
     
     override func stopAnimation() {
-        logger.info("stopAnimation: \(self.instanceNumber)")
+        logger.info("stopAnimation: \(self.instanceNumber, privacy: .public)")
         super.stopAnimation()
     }
     
 
     override func draw(_ rect: NSRect) {
         if Preferences.logDrawCalls {
-            logger.info("draw: \(self.instanceNumber)")
+            logger.info("draw: \(self.instanceNumber, privacy: .public)")
         }
         // Fill entire rect with border color
         Preferences.canvasColor.nsColor.set()
@@ -139,16 +171,48 @@ class ScreenSaverMinimalView : ScreenSaverView {
             
             debugText.draw(at: NSPoint(x: debugXPosition, y: debugYPosition), withAttributes: debugAttributes)
         }
+        
+        // Draw version info in bottom right corner
+        let versionText = getVersionString()
+        let versionAttributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.boldSystemFont(ofSize: 16),
+            .foregroundColor: NSColor.white
+        ]
+        
+        let versionTextSize = versionText.size(withAttributes: versionAttributes)
+        let versionXPosition = bounds.width - versionTextSize.width - (bounds.width * 0.05)
+        let versionYPosition = borderWidth + 20
+        
+        versionText.draw(at: NSPoint(x: versionXPosition, y: versionYPosition), withAttributes: versionAttributes)
 
     }
     
     override func animateOneFrame() {
         if Preferences.logAnimateOneFrameCalls {
-            logger.info("animateOneFrame: \(self.instanceNumber)")
+            logger.info("animateOneFrame: \(self.instanceNumber, privacy: .public)")
         }
         window!.disableFlushing()
         
         window!.enableFlushing()
+    }
+    
+    private func handleWillStopNotification() {
+        logger.info("handleWillStopNotification: \(self.instanceNumber, privacy: .public) - Received willStop notification, scheduling exit in 2 seconds")
+        
+        // Schedule exit after 2 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.logger.info("handleWillStopNotification: \(self.instanceNumber, privacy: .public) - Executing exit(0)")
+            exit(0)
+        }
+    }
+    
+    deinit {
+        // Remove notification observer if it was registered
+        if let observer = willStopObserver {
+            DistributedNotificationCenter.default().removeObserver(observer)
+            logger.info("deinit: \(self.instanceNumber, privacy: .public) - Removed willStop notification observer")
+        }
+        logger.info("deinit: \(self.instanceNumber, privacy: .public)")
     }
 }
     
