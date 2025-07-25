@@ -8,6 +8,12 @@ Please note that according to Apple, Swift screen savers are only officially sup
 
 The template includes two targets, one that creates a usable `.saver`, and a test target that lets you quickly develop your screen saver without installing. 
 
+## About Tahoe (macOS 26)
+
+macOS 26 (Tahoe) introduced new issues with screen savers, particularly around the `isPreview` parameter behavior. Unlike previous versions where this bug could be worked around, the Tahoe bug currently has no known workaround.
+
+For detailed information about known issues and potential solutions, see: [Tahoe screen saver discussion](https://github.com/JohnCoates/Aerial/issues/1396#issuecomment-3110063589)
+
 ## About Ventura
 
 See here for a list of known issues with macOS Ventura, they relate mostly to the new System Settings app : [Ventura screen saver bugs on wiki](https://github.com/AerialScreensaver/ScreenSaverMinimal/wiki/Issues-with-macOS-Ventura-betas).
@@ -42,4 +48,20 @@ com.apple.security.temporary-exception.yasb
 
 Couple of examples of things you can't do, override the keyboard or read files outside of the system disk. 
 
-Also note that you must sign and notarize your screen saver in order to be able to distribute it to other users. 
+Also note that you must sign and notarize your screen saver in order to be able to distribute it to other users.
+
+## SwiftUI/Combine
+
+This repository contains an experimental branch named `combine` that explores using SwiftUI with Combine for reactive state management in screen savers. The implementation includes:
+
+- **ScreenSaverViewModel**: ObservableObject with Combine publishers for reactive data updates
+- **SwiftUI ContentView**: Declarative UI with animations and state binding
+- **NSHostingView Integration**: Bridge between SwiftUI and ScreenSaverView framework
+
+**Current Status**: The SwiftUI implementation works correctly in the test app target but crashes when running as an actual screen saver. This suggests that SwiftUI may not be compatible with the screen saver framework's execution context, possibly due to:
+
+- Sandboxing restrictions in `legacyScreenSaver.appex`
+- SwiftUI runtime requirements that conflict with screen saver lifecycle
+- NSHostingView incompatibilities with the screen saver drawing context
+
+At this time, it may not be possible to reliably use SwiftUI in a screen saver context. The traditional AppKit/Core Graphics approach in the main branch remains the recommended implementation. 
