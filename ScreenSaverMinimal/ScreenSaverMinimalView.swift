@@ -10,6 +10,16 @@
 import ScreenSaver
 import os.log
 
+// Helper to log to Console
+// Open Console.app to see the logs and filter by "ScreenSaverMinimal:"
+extension OSLog {
+    static let screenSaver = OSLog(subsystem: Bundle.main.bundleIdentifier ?? "ScreenSaverMinimal", category: "Screensaver")
+    
+    static func info(_ message: String) {
+        os_log("ScreenSaverMinimal: %{public}@", log: .screenSaver, type: .default, message)
+    }
+}
+
 class ScreenSaverMinimalView : ScreenSaverView {
     
     lazy var sheetController: ConfigureSheetController = ConfigureSheetController()
@@ -17,7 +27,6 @@ class ScreenSaverMinimalView : ScreenSaverView {
     var originalIsPreview: Bool = false
     
     private var instanceNumber: Int
-    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "ScreenSaverMinimal", category: "ScreenSaver")
     private var willStopObserver: NSObjectProtocol?
     
     private func getVersionString() -> String {
@@ -56,7 +65,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
         
         // Now register with the tracker after super.init
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        logger.info("init: \(self.instanceNumber, privacy: .public)")
+        OSLog.info("init: \(self.instanceNumber)")
         
         // Register for willStop notification if the preference is enabled
         if Preferences.enableExitFixOnWillStop {
@@ -67,15 +76,17 @@ class ScreenSaverMinimalView : ScreenSaverView {
             ) { [weak self] _ in
                 self?.handleWillStopNotification()
             }
-            logger.info("init: \(self.instanceNumber, privacy: .public) - Registered for willStop notification")
+            OSLog.info("init: \(self.instanceNumber) - Registered for willStop notification")
         }
+        
+
     }
     
     required init?(coder aDecoder: NSCoder) {
         instanceNumber = 0
         super.init(coder: aDecoder)
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        logger.info("init(coder:): \(self.instanceNumber, privacy: .public)")
+        OSLog.info("init(coder:): \(self.instanceNumber)")
         
         // Register for willStop notification if the preference is enabled
         if Preferences.enableExitFixOnWillStop {
@@ -86,36 +97,36 @@ class ScreenSaverMinimalView : ScreenSaverView {
             ) { [weak self] _ in
                 self?.handleWillStopNotification()
             }
-            logger.info("init(coder:): \(self.instanceNumber, privacy: .public) - Registered for willStop notification")
+            OSLog.info("init(coder:): \(self.instanceNumber) - Registered for willStop notification")
         }
     }
     
     
     override var hasConfigureSheet: Bool {
-        logger.info("hasConfigureSheet: \(self.instanceNumber, privacy: .public)")
+        OSLog.info("hasConfigureSheet: \(self.instanceNumber)")
         return true
     }
     
     override var configureSheet: NSWindow? {
-        logger.info("configureSheet: \(self.instanceNumber, privacy: .public)")
+        OSLog.info("configureSheet: \(self.instanceNumber)")
         return sheetController.window
     }
 
     
     override func startAnimation() {
-        logger.info("startAnimation: \(self.instanceNumber, privacy: .public)")
+        OSLog.info("startAnimation: \(self.instanceNumber)")
         super.startAnimation()
     }
     
     override func stopAnimation() {
-        logger.info("stopAnimation: \(self.instanceNumber, privacy: .public)")
+        OSLog.info("stopAnimation: \(self.instanceNumber)")
         super.stopAnimation()
     }
     
 
     override func draw(_ rect: NSRect) {
         if Preferences.logDrawCalls {
-            logger.info("draw: \(self.instanceNumber, privacy: .public)")
+            OSLog.info("draw: \(self.instanceNumber)")
         }
         // Fill entire rect with border color
         Preferences.canvasColor.nsColor.set()
@@ -189,7 +200,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     override func animateOneFrame() {
         if Preferences.logAnimateOneFrameCalls {
-            logger.info("animateOneFrame: \(self.instanceNumber, privacy: .public)")
+            OSLog.info("animateOneFrame: \(self.instanceNumber)")
         }
         window!.disableFlushing()
         
@@ -197,11 +208,11 @@ class ScreenSaverMinimalView : ScreenSaverView {
     }
     
     private func handleWillStopNotification() {
-        logger.info("handleWillStopNotification: \(self.instanceNumber, privacy: .public) - Received willStop notification, scheduling exit in 2 seconds")
+        OSLog.info("handleWillStopNotification: \(self.instanceNumber) - Received willStop notification, scheduling exit in 2 seconds")
         
         // Schedule exit after 2 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.logger.info("handleWillStopNotification: \(self.instanceNumber, privacy: .public) - Executing exit(0)")
+            OSLog.info("handleWillStopNotification: \(self.instanceNumber) - Executing exit(0)")
             exit(0)
         }
     }
@@ -210,9 +221,9 @@ class ScreenSaverMinimalView : ScreenSaverView {
         // Remove notification observer if it was registered
         if let observer = willStopObserver {
             DistributedNotificationCenter.default().removeObserver(observer)
-            logger.info("deinit: \(self.instanceNumber, privacy: .public) - Removed willStop notification observer")
+            OSLog.info("deinit: \(self.instanceNumber) - Removed willStop notification observer")
         }
-        logger.info("deinit: \(self.instanceNumber, privacy: .public)")
+        OSLog.info("deinit: \(self.instanceNumber)")
     }
 }
     

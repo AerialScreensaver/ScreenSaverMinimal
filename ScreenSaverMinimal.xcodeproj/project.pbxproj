@@ -126,11 +126,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 03A485231B644145008A2D6A /* Build configuration list for PBXNativeTarget "ScreenSaverMinimal" */;
 			buildPhases = (
+				F09541BD2E33C4B7001CC9EF /* Run Script (build date) */,
 				03A485131B644145008A2D6A /* Sources */,
 				03A485141B644145008A2D6A /* Frameworks */,
 				03A485151B644145008A2D6A /* Headers */,
 				03A485161B644145008A2D6A /* Resources */,
-				F09541BD2E33C4B7001CC9EF /* Run Script (build date) */,
 			);
 			buildRules = (
 			);
@@ -239,7 +239,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "BUILD_DATE=$(date \"+%Y%m%d_%H%M%S\")\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUILD_DATE\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n\n";
+			shellScript = "BUILD_DATE=$(date \"+%Y%m%d_%H%M%S\")\n\n# Update Xcode project version\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUILD_DATE\" ${INFOPLIST_FILE}\n\n";
 		};
 		F09541BE2E33CAE9001CC9EF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -256,7 +256,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/build_date.sh\n";
+			shellScript = "BUILD_DATE=$(date \"+%Y%m%d_%H%M%S\")\n\n# Update Xcode project version\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUILD_DATE\" ${INFOPLIST_FILE}\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -312,7 +312,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Accent Color";
-				BUILD_DATE = "$(shell date \"+%Y%m%d_%H%M%S\")";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -342,7 +341,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -371,7 +370,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Accent Color";
-				BUILD_DATE = "$(shell date \"+%Y%m%d_%H%M%S\")";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -402,7 +400,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -435,7 +433,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.ScreenSaverMinimal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -459,7 +457,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.ScreenSaverMinimal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -487,7 +485,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.SaverTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -513,7 +511,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.SaverTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
