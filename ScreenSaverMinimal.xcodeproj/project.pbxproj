@@ -19,6 +19,12 @@
 		ACD891891DC38B790019C16F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACD891871DC38B790019C16F /* MainMenu.xib */; };
 		ACD8918E1DC38C4B0019C16F /* ScreenSaverMinimalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */; };
 		ACD8918F1DC38C4B0019C16F /* ConfigureSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034D858F1B64F0AD00D2EF6B /* ConfigureSheetController.swift */; };
+		F0156A612E33E73500C4EA3C /* ScreenSaverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A5F2E33E73500C4EA3C /* ScreenSaverContentView.swift */; };
+		F0156A622E33E73500C4EA3C /* ScreenSaverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A602E33E73500C4EA3C /* ScreenSaverViewModel.swift */; };
+		F0156A632E33E73500C4EA3C /* ScreenSaverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A5F2E33E73500C4EA3C /* ScreenSaverContentView.swift */; };
+		F0156A642E33E73500C4EA3C /* ScreenSaverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A602E33E73500C4EA3C /* ScreenSaverViewModel.swift */; };
+		F0156A662E33E7E400C4EA3C /* OSLogExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A652E33E7E400C4EA3C /* OSLogExtensions.swift */; };
+		F0156A672E33E7E400C4EA3C /* OSLogExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A652E33E7E400C4EA3C /* OSLogExtensions.swift */; };
 		F05A779B2E33B9EA0095CAF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ACD891851DC38B790019C16F /* Assets.xcassets */; };
 		F0EAC97A2E329E14008427CE /* InstanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EAC9792E329E14008427CE /* InstanceTracker.swift */; };
 		F0EAC97B2E329E14008427CE /* InstanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EAC9792E329E14008427CE /* InstanceTracker.swift */; };
@@ -37,6 +43,9 @@
 		ACD891851DC38B790019C16F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD891881DC38B790019C16F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		ACD8918A1DC38B790019C16F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0156A5F2E33E73500C4EA3C /* ScreenSaverContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSaverContentView.swift; sourceTree = "<group>"; };
+		F0156A602E33E73500C4EA3C /* ScreenSaverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSaverViewModel.swift; sourceTree = "<group>"; };
+		F0156A652E33E7E400C4EA3C /* OSLogExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLogExtensions.swift; sourceTree = "<group>"; };
 		F0EAC9792E329E14008427CE /* InstanceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceTracker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,6 +92,9 @@
 				F0EAC9792E329E14008427CE /* InstanceTracker.swift */,
 				03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */,
 				034D858F1B64F0AD00D2EF6B /* ConfigureSheetController.swift */,
+				F0156A5F2E33E73500C4EA3C /* ScreenSaverContentView.swift */,
+				F0156A602E33E73500C4EA3C /* ScreenSaverViewModel.swift */,
+				F0156A652E33E7E400C4EA3C /* OSLogExtensions.swift */,
 				03D29C1224A262B400D61A02 /* ConfigureSheet.xib */,
 				03A4851B1B644145008A2D6A /* Supporting Files */,
 			);
@@ -167,7 +179,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2600;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					03A485171B644145008A2D6A = {
@@ -265,8 +277,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0156A632E33E73500C4EA3C /* ScreenSaverContentView.swift in Sources */,
+				F0156A642E33E73500C4EA3C /* ScreenSaverViewModel.swift in Sources */,
 				03A485271B644187008A2D6A /* ScreenSaverMinimalView.swift in Sources */,
 				F0EAC97B2E329E14008427CE /* InstanceTracker.swift in Sources */,
+				F0156A662E33E7E400C4EA3C /* OSLogExtensions.swift in Sources */,
 				03F3BD4324A2462600F7CD7A /* Preferences.swift in Sources */,
 				034D85901B64F0AD00D2EF6B /* ConfigureSheetController.swift in Sources */,
 			);
@@ -280,8 +295,11 @@
 				F0EAC97A2E329E14008427CE /* InstanceTracker.swift in Sources */,
 				ACD8918F1DC38C4B0019C16F /* ConfigureSheetController.swift in Sources */,
 				03F3BD4424A2462600F7CD7A /* Preferences.swift in Sources */,
+				F0156A612E33E73500C4EA3C /* ScreenSaverContentView.swift in Sources */,
+				F0156A622E33E73500C4EA3C /* ScreenSaverViewModel.swift in Sources */,
 				03D29C1024A262B400D61A02 /* ConfigureSheet.xib in Sources */,
 				ACD891841DC38B790019C16F /* AppDelegate.swift in Sources */,
+				F0156A672E33E7E400C4EA3C /* OSLogExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,6 +379,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -412,6 +431,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
