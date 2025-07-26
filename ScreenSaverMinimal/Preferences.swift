@@ -11,8 +11,8 @@ import ScreenSaver
 import OSLog
 
 struct Preferences {
-    @Storage(key: "CanvasColor", defaultValue: Color(nsColor: NSColor(red: 1, green: 0.0, blue: 0.5, alpha: 1.0)))
-    static var canvasColor: Color
+    @Storage(key: "CanvasColor", defaultValue: PreferenceColor(nsColor: NSColor(red: 1, green: 0.0, blue: 0.5, alpha: 1.0)))
+    static var canvasColor: PreferenceColor
     
     @SimpleStorage(key: "LogDrawCalls", defaultValue: false)
     static var logDrawCalls: Bool
@@ -27,7 +27,7 @@ struct Preferences {
 // MARK: - Helpers
 
 // We make a wrapper to make NSColor (kinda) codable, this may be needed for some types
-struct Color : Codable {
+struct PreferenceColor : Codable {
     var red : CGFloat = 0.0, green: CGFloat = 0.0, blue: CGFloat = 0.0, alpha: CGFloat = 0.0
 
     var nsColor : NSColor {
