@@ -4,6 +4,8 @@ Template to create a macOS screen saver using Swift 5 (forked from https://githu
 
 This project can be used as a starting point to create a macOS screen saver using Swift, as, as of Xcode 26, Apple only provides a template for Objective-C screen savers. 
 
+![Screenshot](screenshot.jpg)
+
 Please note that according to Apple, Swift screen savers are only officially supported as of macOS 14.6. There are **many** issues using Swift for screensavers on previous macOS versions (as an example, textfields won't work on High Sierra) so while you can support older versions, be aware there are *many* pitfalls that have compounded particularly since macOS Ventura and later. Unless you absolutely want to target a specific version of macOS, I highly recommend you only care about version n-1 (like this template's main branch) as it will make your life easier. Screensavers are hard enough without handling the pile of varying pitfalls that each macOS release brings.
 
 The template includes two targets, one that creates a usable `.saver`, and a test target that lets you quickly develop your screen saver without installing. 

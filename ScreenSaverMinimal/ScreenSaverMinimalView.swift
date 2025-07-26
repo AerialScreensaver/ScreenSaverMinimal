@@ -31,6 +31,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     private var instanceNumber: Int
     private var willStopObserver: NSObjectProtocol?
+    private var redrawTimer: Timer?
     
     private func getVersionString() -> String {
         let bundle = Bundle(for: type(of: self))
@@ -119,11 +120,20 @@ class ScreenSaverMinimalView : ScreenSaverView {
     override func startAnimation() {
         OSLog.info("startAnimation: \(self.instanceNumber)")
         super.startAnimation()
+        
+        // Start redraw timer - triggers redraw every second
+        redrawTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.needsDisplay = true
+        }
     }
     
     override func stopAnimation() {
         OSLog.info("stopAnimation: \(self.instanceNumber)")
         super.stopAnimation()
+        
+        // Stop and clean up redraw timer
+        redrawTimer?.invalidate()
+        redrawTimer = nil
     }
     
 
@@ -213,6 +223,10 @@ class ScreenSaverMinimalView : ScreenSaverView {
     private func handleWillStopNotification() {
         OSLog.info("handleWillStopNotification: \(self.instanceNumber) - Received willStop notification, scheduling exit in 2 seconds")
         
+        // Stop redraw timer before exit
+        redrawTimer?.invalidate()
+        redrawTimer = nil
+        
         // Schedule exit after 2 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             OSLog.info("handleWillStopNotification: \(self.instanceNumber) - Executing exit(0)")
@@ -221,6 +235,10 @@ class ScreenSaverMinimalView : ScreenSaverView {
     }
     
     deinit {
+        // Clean up redraw timer
+        redrawTimer?.invalidate()
+        redrawTimer = nil
+        
         // Remove notification observer if it was registered
         if let observer = willStopObserver {
             DistributedNotificationCenter.default().removeObserver(observer)
