@@ -8,6 +8,8 @@ Please note that according to Apple, Swift screen savers are only officially sup
 
 The template includes two targets, one that creates a usable `.saver`, and a test target that lets you quickly develop your screen saver without installing. 
 
+This template also includes workarounds for some of the known issues in macOS screensaver development, such as the `isPreview` bug and instance lifecycle management problems.
+
 ## Branch Information
 
 ### Default Branch (Recommended)
