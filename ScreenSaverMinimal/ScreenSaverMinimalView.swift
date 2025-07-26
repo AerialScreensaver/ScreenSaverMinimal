@@ -8,6 +8,7 @@
 
 
 import ScreenSaver
+import SwiftUI
 import os.log
 
 // Helper to log to Console
@@ -22,7 +23,9 @@ extension OSLog {
 
 class ScreenSaverMinimalView : ScreenSaverView {
     
-    lazy var sheetController: ConfigureSheetController = ConfigureSheetController()
+    // Configuration sheet controller
+    lazy var swiftUISheetController: SwiftUIConfigureSheetController = SwiftUIConfigureSheetController()
+    
     var isPreviewBug: Bool = false
     var originalIsPreview: Bool = false
     
@@ -109,7 +112,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     override var configureSheet: NSWindow? {
         OSLog.info("configureSheet: \(self.instanceNumber)")
-        return sheetController.window
+        return swiftUISheetController.window
     }
 
     
