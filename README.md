@@ -6,29 +6,82 @@ This project can be used as a starting point to create a macOS screen saver usin
 
 ![Screenshot](screenshot.jpg)
 
+This template also includes workarounds when applicable for some of the known issues in macOS screensaver development, such as the `isPreview` bug and instance lifecycle management problems.
+
+## Building and Installation
+
+### Prerequisites
+- Xcode (tested with Version 26.0 beta 4 - 17A5285i)
+- macOS 15.6 or later
+
+### Getting Started
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/youruser/ScreenSaverMinimal.git
+   cd ScreenSaverMinimal
+   ```
+
+2. **Open the project in Xcode:**
+   ```bash
+   open ScreenSaverMinimal.xcodeproj
+   ```
+
+### Project Targets
+
+This project contains two targets:
+
+- **SaverTest**: A test application for developing and debugging your screensaver without installing it. Run this target directly in Xcode for rapid development.
+- **ScreenSaverMinimal**: The actual screensaver bundle (.saver) that can be installed on your system.
+
+### Building the Screensaver
+
+1. Select the "ScreenSaverMinimal" scheme in Xcode
+2. Build the project (⌘B)
+3. The `.saver` file will be created in your build folder
+
+### Installing the Screensaver
+
+1. After building, use the menu Product → Show Build Folder in Finder to locate the `ScreenSaverMinimal.saver` file
+2. Double-click the `.saver` file
+3. macOS will prompt you to install it for the current user or all users
+4. The screensaver will now appear in System Settings > Wallpaper & Screensaver
+
+### Distribution
+
+To distribute your screensaver to others, you must sign and notarize it:
+
+1. **Archive the screensaver:**
+   - Select Product → Archive in Xcode
+   - Once the archive completes, the Organizer window will open
+   - Select your archive and click "Distribute Content"
+   - Choose "Export" and follow the prompts to export the .saver file
+
+2. **Notarize via command line:**
+   ```bash
+   # Submit for notarization
+   xcrun notarytool submit "ScreenSaverMinimal.saver" \
+     --keychain-profile "AC_PASSWORD" \
+     --wait
+   
+   # Once notarization succeeds, staple the ticket
+   xcrun stapler staple "ScreenSaverMinimal.saver"
+   
+   # Verify the stapling
+   xcrun stapler validate "ScreenSaverMinimal.saver"
+   ```
+
+   Note: You'll need to set up a keychain profile first:
+   ```bash
+   xcrun notarytool store-credentials "AC_PASSWORD" \
+     --apple-id "your@email.com" \
+     --team-id "TEAMID" \
+     --password "app-specific-password"
+   ```
+
+*Note: For projects requiring broader macOS compatibility (back to macOS 11.5), there's a `legacy-support` branch that uses XIB files instead of SwiftUI for configuration. We strongly recommend against using it unless absolutely necessary.*
+
 Please note that according to Apple, Swift screen savers are only officially supported as of macOS 14.6. There are **many** issues using Swift for screensavers on previous macOS versions (as an example, textfields won't work on High Sierra) so while you can support older versions, be aware there are *many* pitfalls that have compounded particularly since macOS Ventura and later. Unless you absolutely want to target a specific version of macOS, I highly recommend you only care about version n-1 (like this template's main branch) as it will make your life easier. Screensavers are hard enough without handling the pile of varying pitfalls that each macOS release brings.
-
-The template includes two targets, one that creates a usable `.saver`, and a test target that lets you quickly develop your screen saver without installing. 
-
-This template also includes workarounds for some of the known issues in macOS screensaver development, such as the `isPreview` bug and instance lifecycle management problems.
-
-## Branch Information
-
-### Default Branch (Recommended)
-This repository's default branch targets **macOS 15+** and features a modern SwiftUI-based configuration sheet. This is the most up-to-date implementation and **recommended for new screensaver projects**.
-
-**Features:**
-- Minimum macOS 15.6 deployment target
-- SwiftUI configuration interface with native controls
-- Modern Swift property wrappers for preferences
-
-### Legacy Support Branch
-For projects requiring broader macOS compatibility, use the `legacy-support` branch which:
-- Supports older macOS versions (back to macOS 11.5)
-- Uses traditional Interface Builder XIB files for configuration
-- Maintains compatibility with older Swift features
-
-Also, don't use this. 
 
 ## About Tahoe (macOS 26)
 
