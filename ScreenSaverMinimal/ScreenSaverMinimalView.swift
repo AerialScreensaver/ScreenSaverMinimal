@@ -34,6 +34,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
     private var instanceNumber: Int
     private var willStopObserver: NSObjectProtocol?
     private var redrawTimer: Timer?
+    private var isAnimationStarted: Bool = false
     
     private func getVersionString() -> String {
         let bundle = Bundle(for: type(of: self))
@@ -159,8 +160,14 @@ class ScreenSaverMinimalView : ScreenSaverView {
 
     
     override func startAnimation() {
+        if isAnimationStarted {
+            OSLog.info("startAnimation \(instanceInfo()): WARNING - Already started! Ignoring duplicate call")
+            return
+        }
+        
         OSLog.info("startAnimation \(instanceInfo()):")
         super.startAnimation()
+        isAnimationStarted = true
         
         // Start redraw timer - triggers redraw every second
         redrawTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
@@ -169,8 +176,14 @@ class ScreenSaverMinimalView : ScreenSaverView {
     }
     
     override func stopAnimation() {
+        if !isAnimationStarted {
+            OSLog.info("stopAnimation \(instanceInfo()): WARNING - Not started! Ignoring erroneous call")
+            return
+        }
+        
         OSLog.info("stopAnimation \(instanceInfo()):")
         super.stopAnimation()
+        isAnimationStarted = false
         
         // Stop and clean up redraw timer
         redrawTimer?.invalidate()
@@ -294,9 +307,10 @@ class ScreenSaverMinimalView : ScreenSaverView {
     private func handleWillStopNotification() {
         OSLog.info("handleWillStopNotification \(instanceInfo()): Received willStop notification, scheduling exit in 2 seconds")
         
-        // Stop redraw timer before exit
+        // Stop redraw timer and mark animation as stopped before exit
         redrawTimer?.invalidate()
         redrawTimer = nil
+        isAnimationStarted = false
         
         // Schedule exit after 2 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
@@ -306,6 +320,11 @@ class ScreenSaverMinimalView : ScreenSaverView {
     }
     
     deinit {
+        // Check for animation state issues
+        if isAnimationStarted {
+            OSLog.info("deinit \(instanceInfo()): WARNING - Animation was still running")
+        }
+        
         // Clean up redraw timer
         redrawTimer?.invalidate()
         redrawTimer = nil
