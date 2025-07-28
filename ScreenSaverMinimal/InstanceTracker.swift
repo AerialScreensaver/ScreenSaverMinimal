@@ -14,6 +14,9 @@ class InstanceTracker {
     private var instanceCounter = 0
     private var instances: [Int: WeakRef] = [:]
     
+    // Track if we're running in app mode (SaverTest)
+    static var isRunningInApp: Bool = false
+    
     private init() {}
     
     func registerInstance(_ instance: ScreenSaverMinimalView) -> Int {

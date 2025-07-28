@@ -11,6 +11,7 @@ import ScreenSaver
 import SwiftUI
 import os.log
 import Darwin
+import Quartz
 
 // Helper to log to Console
 // Open Console.app to see the logs and filter by "SSM (P:"
@@ -30,11 +31,17 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     var isPreviewBug: Bool = false
     var originalIsPreview: Bool = false
+    var actualIsPreview: Bool = false
     
     private var instanceNumber: Int
     private var willStopObserver: NSObjectProtocol?
     private var redrawTimer: Timer?
     private var isAnimationStarted: Bool = false
+    
+    // Check if we're running in the SaverTest app
+    private var isRunningInApp: Bool {
+        return InstanceTracker.isRunningInApp
+    }
     
     private func getVersionString() -> String {
         let bundle = Bundle(for: type(of: self))
@@ -49,6 +56,15 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     private func formatFrame(_ frame: NSRect) -> String {
         return "(x:\(frame.origin.x), y:\(frame.origin.y), w:\(frame.size.width), h:\(frame.size.height))"
+    }
+    
+    private static func isScreenLocked() -> Bool {
+        guard let dict = CGSessionCopyCurrentDictionary() as? [String: Any] else {
+            return false
+        }
+        
+        let isLocked = dict["CGSSessionScreenIsLocked"] as? Bool ?? false
+        return isLocked
     }
     
     private func logProcessInfo() {
@@ -83,17 +99,34 @@ class ScreenSaverMinimalView : ScreenSaverView {
         // Need to set instanceNumber before super.init
         instanceNumber = 0 // Temporary value
         
+        // Check and log screen lock status for debugging
+        let screenLocked = ScreenSaverMinimalView.isScreenLocked()
+        OSLog.info("init: CGSSessionScreenIsLocked = \(screenLocked)")
+        
         var preview = isPreview
         originalIsPreview = isPreview
         
-        // isPreview is differently bugged depending on macOS versions. The common bug pre macOS 26 can be workarounded. The Tahoe+ bug has no workaround at this time.
-        if #available(macOS 26.0, *) {
+        // isPreview detection simplified using isScreenLocked() on Tahoe
+        if InstanceTracker.isRunningInApp {
+            // App mode - use original values
             preview = isPreview
+            actualIsPreview = isPreview
+        } else if #available(macOS 26.0, *) {
+            // Tahoe - use screen lock detection (simple!)
+            if screenLocked {
+                // Screen is locked = actual screensaver
+                preview = false
+                actualIsPreview = false
+            } else {
+                // Screen not locked = preview mode
+                preview = true
+                actualIsPreview = true
+            }
         } else {
-            // Radar# FB7486243, legacyScreenSaver.appex always returns true, unlike what used
-            // to happen in previous macOS versions, see documentation here : https://developer.apple.com/documentation/screensaver/screensaverview/1512475-init$
-            // This is only true pre-macOS Tahoe, that has the opposite bug, that we can't workaround this way!
+            // Pre-Tahoe - existing frame size logic
+            // Radar# FB7486243, legacyScreenSaver.appex always returns true
             preview = true
+            actualIsPreview = true
             // We can workaround that bug by looking at the size of the frame
             // It's always 296.0 x 184.0 when running in preview mode
             if frame.width > 400 && frame.height > 300 {
@@ -101,20 +134,29 @@ class ScreenSaverMinimalView : ScreenSaverView {
                     isPreviewBug = true
                 }
                 preview = false
+                actualIsPreview = false
             }
         }
         
         super.init(frame: frame, isPreview: preview)!
         
-        // Now register with the tracker after super.init
+        // Always register with the tracker and log
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        OSLog.info("init \(instanceInfo()): frame=\(formatFrame(frame)), isPreview=\(isPreview)")
+        OSLog.info("init \(instanceInfo()): frame=\(formatFrame(frame)), isPreview=\(isPreview), actualIsPreview=\(actualIsPreview)")
+        
+        // Handle Tahoe ghost instances
+        if !InstanceTracker.isRunningInApp, #available(macOS 26.0, *) {
+            if actualIsPreview && frame == NSRect(x: 0, y: 0, width: 0, height: 0) {
+                OSLog.info("init: Ghost instance detected - skipping initialization")
+                return
+            }
+        }
         
         // Log process information for debugging
         logProcessInfo()
         
-        // Register for willStop notification if the preference is enabled
-        if Preferences.enableExitFixOnWillStop {
+        // Register for willStop notification if the preference is enabled AND not in app mode
+        if Preferences.enableExitFixOnWillStop && !isRunningInApp {
             willStopObserver = DistributedNotificationCenter.default().addObserver(
                 forName: NSNotification.Name("com.apple.screensaver.willstop"),
                 object: nil,
@@ -134,8 +176,8 @@ class ScreenSaverMinimalView : ScreenSaverView {
         instanceNumber = InstanceTracker.shared.registerInstance(self)
         OSLog.info("init(coder:) \(instanceInfo()):")
         
-        // Register for willStop notification if the preference is enabled
-        if Preferences.enableExitFixOnWillStop {
+        // Register for willStop notification if the preference is enabled AND not in app mode
+        if Preferences.enableExitFixOnWillStop && !isRunningInApp {
             willStopObserver = DistributedNotificationCenter.default().addObserver(
                 forName: NSNotification.Name("com.apple.screensaver.willstop"),
                 object: nil,
@@ -233,13 +275,23 @@ class ScreenSaverMinimalView : ScreenSaverView {
         let borderWidth = bounds.width * 0.05
         let innerRect = bounds.insetBy(dx: borderWidth, dy: borderWidth)
         
-        // Use dark purple if in preview mode, black otherwise
-        let innerColor = originalIsPreview ? NSColor(red: 0.3, green: 0.1, blue: 0.4, alpha: 1.0) : NSColor.black
+        // Use dark red if bug fix is applied, dark purple if in preview mode, black otherwise
+        let innerColor: NSColor
+        if actualIsPreview && originalIsPreview != actualIsPreview {
+            // Bug fix is active - use dark red
+            innerColor = NSColor(red: 0.4, green: 0.1, blue: 0.1, alpha: 1.0)
+        } else if actualIsPreview {
+            // Normal preview mode - use dark purple
+            innerColor = NSColor(red: 0.3, green: 0.1, blue: 0.4, alpha: 1.0)
+        } else {
+            // Not preview mode - use black
+            innerColor = NSColor.black
+        }
         innerColor.set()
         NSBezierPath(rect: innerRect).fill()
 
-        // Draw preview status text
-        let previewText = "Preview: \(originalIsPreview ? "YES" : "NO")"
+        // Draw preview status text showing both values
+        let previewText = "Preview: \(actualIsPreview ? "YES" : "NO") (Original: \(originalIsPreview ? "YES" : "NO"))"
         let attributes: [NSAttributedString.Key: Any] = [
             .font: NSFont.boldSystemFont(ofSize: 24),
             .foregroundColor: NSColor.white
@@ -299,13 +351,22 @@ class ScreenSaverMinimalView : ScreenSaverView {
         if Preferences.logAnimateOneFrameCalls {
             OSLog.info("animateOneFrame \(instanceInfo()):")
         }
+        
         window!.disableFlushing()
         
         window!.enableFlushing()
     }
     
     private func handleWillStopNotification() {
-        OSLog.info("handleWillStopNotification \(instanceInfo()): Received willStop notification, scheduling exit in 2 seconds")
+        OSLog.info("handleWillStopNotification \(instanceInfo()): Received willStop notification")
+        
+        // Don't exit if we're in preview mode
+        if actualIsPreview {
+            OSLog.info("handleWillStopNotification \(instanceInfo()): Ignoring willStop in preview mode")
+            return
+        }
+        
+        OSLog.info("handleWillStopNotification \(instanceInfo()): Scheduling exit in 2 seconds")
         
         // Stop redraw timer and mark animation as stopped before exit
         redrawTimer?.invalidate()

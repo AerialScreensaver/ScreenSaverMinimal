@@ -9,6 +9,11 @@ import SwiftUI
 
 @main
 struct SaverTestApp: App {
+    init() {
+        // Set the app mode flag so ScreenSaverMinimalView knows we're running in the test app
+        InstanceTracker.isRunningInApp = true
+    }
+    
     var body: some Scene {
         WindowGroup {
             SaverTestContentView()
