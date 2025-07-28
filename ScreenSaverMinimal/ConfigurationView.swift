@@ -50,7 +50,7 @@ struct ConfigurationView: View {
                 }
                 
                 Section("About logs") {
-                    Text("To view log messages, open Console.app and filter by \"ScreenSaverMinimal:\"")
+                    Text("To view log messages, open Console.app and filter by \"SSM (\"")
                         .font(.body)
                         .foregroundColor(.secondary)
                         .padding(.vertical, 8)
