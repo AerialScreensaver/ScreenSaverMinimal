@@ -10,14 +10,16 @@
 import ScreenSaver
 import SwiftUI
 import os.log
+import Darwin
 
 // Helper to log to Console
-// Open Console.app to see the logs and filter by "ScreenSaverMinimal:"
+// Open Console.app to see the logs and filter by "SSM (P:"
 extension OSLog {
     static let screenSaver = OSLog(subsystem: Bundle.main.bundleIdentifier ?? "ScreenSaverMinimal", category: "Screensaver")
     
     static func info(_ message: String) {
-        os_log("ScreenSaverMinimal: %{public}@", log: .screenSaver, type: .default, message)
+        let pid = ProcessInfo.processInfo.processIdentifier
+        os_log("SSM (P:%d): %{public}@", log: .screenSaver, type: .default, pid, message)
     }
 }
 
@@ -42,6 +44,38 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     private func instanceInfo() -> String {
         return "(\(instanceNumber)/\(InstanceTracker.shared.totalInstances))"
+    }
+    
+    private func formatFrame(_ frame: NSRect) -> String {
+        return "(x:\(frame.origin.x), y:\(frame.origin.y), w:\(frame.size.width), h:\(frame.size.height))"
+    }
+    
+    private func logProcessInfo() {
+        // Current process info
+        let processInfo = ProcessInfo.processInfo
+        let currentPID = processInfo.processIdentifier
+        let processName = processInfo.processName
+        let processPath = processInfo.arguments.first ?? "unknown"
+        
+        // Parent process info
+        let parentPID = getppid()
+        var parentName = "unknown"
+        var parentBundleID = "unknown"
+        
+        if let parentApp = NSRunningApplication(processIdentifier: parentPID) {
+            parentName = parentApp.localizedName ?? "unknown"
+            parentBundleID = parentApp.bundleIdentifier ?? "unknown"
+        }
+        
+        // Bundle context
+        let mainBundle = Bundle.main
+        let ourBundle = Bundle(for: type(of: self))
+        
+        OSLog.info("init \(instanceInfo()): Process Info:")
+        OSLog.info("  Current: PID=\(currentPID), name=\(processName), path=\(processPath)")
+        OSLog.info("  Parent: PID=\(parentPID), name=\(parentName), bundleID=\(parentBundleID)")
+        OSLog.info("  MainBundle: \(mainBundle.bundleIdentifier ?? "nil") at \(mainBundle.bundlePath)")
+        OSLog.info("  OurBundle: \(ourBundle.bundleIdentifier ?? "nil") at \(ourBundle.bundlePath)")
     }
     
     override init(frame: NSRect, isPreview: Bool) {
@@ -73,7 +107,10 @@ class ScreenSaverMinimalView : ScreenSaverView {
         
         // Now register with the tracker after super.init
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        OSLog.info("init \(instanceInfo()): frame=\(frame.size), isPreview=\(isPreview)")
+        OSLog.info("init \(instanceInfo()): frame=\(formatFrame(frame)), isPreview=\(isPreview)")
+        
+        // Log process information for debugging
+        logProcessInfo()
         
         // Register for willStop notification if the preference is enabled
         if Preferences.enableExitFixOnWillStop {
@@ -140,10 +177,40 @@ class ScreenSaverMinimalView : ScreenSaverView {
         redrawTimer = nil
     }
     
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        
+        if let window = self.window {
+            OSLog.info("viewDidMoveToWindow \(instanceInfo()): window=\(window), frame=\(formatFrame(window.frame)), screen=\(window.screen?.localizedName ?? "unknown")")
+        } else {
+            OSLog.info("viewDidMoveToWindow \(instanceInfo()): window=nil (removed from hierarchy)")
+        }
+    }
+    
+    override func viewWillMove(toSuperview newSuperview: NSView?) {
+        super.viewWillMove(toSuperview: newSuperview)
+        OSLog.info("viewWillMove \(instanceInfo()): from superview=\(self.superview?.description ?? "nil") to superview=\(newSuperview?.description ?? "nil")")
+    }
+    
+    override func viewDidChangeBackingProperties() {
+        super.viewDidChangeBackingProperties()
+        OSLog.info("viewDidChangeBackingProperties \(instanceInfo()): backingScaleFactor=\(self.window?.backingScaleFactor ?? 0)")
+    }
+    
+    override func viewWillStartLiveResize() {
+        super.viewWillStartLiveResize()
+        OSLog.info("viewWillStartLiveResize \(instanceInfo()): frame=\(formatFrame(self.window?.frame ?? .zero))")
+    }
+    
+    override func viewDidEndLiveResize() {
+        super.viewDidEndLiveResize()
+        OSLog.info("viewDidEndLiveResize \(instanceInfo()): frame=\(formatFrame(self.window?.frame ?? .zero))")
+    }
+    
 
     override func draw(_ rect: NSRect) {
         if Preferences.logDrawCalls {
-            OSLog.info("draw \(instanceInfo()): rect=\(rect)")
+            OSLog.info("draw \(instanceInfo()): rect=\(formatFrame(rect))")
         }
         // Fill entire rect with border color
         Preferences.canvasColor.nsColor.set()
