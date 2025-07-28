@@ -83,6 +83,26 @@ To distribute your screensaver to others, you must sign and notarize it:
 
 Please note that according to Apple, Swift screen savers are only officially supported as of macOS 14.6. There are **many** issues using Swift for screensavers on previous macOS versions (as an example, textfields won't work on High Sierra) so while you can support older versions, be aware there are *many* pitfalls that have compounded particularly since macOS Ventura and later. Unless you absolutely want to target a specific version of macOS, I highly recommend you only care about version n-1 (like this template's main branch) as it will make your life easier. Screensavers are hard enough without handling the pile of varying pitfalls that each macOS release brings.
 
+## Logs via Console.app
+
+This template includes comprehensive logging to help debug screensaver behavior across different scenarios:
+
+### What Gets Logged
+- **Instance Lifecycle**: Creation, animation start/stop, window attachment, and destruction of screensaver instances
+- **Process Information**: Current and parent process details to identify the hosting environment
+- **Multi-Monitor Tracking**: Each screensaver instance is numbered (e.g., instance 1/3) to track behavior across multiple displays
+- **Cross-Process Tracking**: Process ID (PID) in each log helps distinguish between different contexts:
+  - **ScreenSaverEngine**: When running as actual screensaver
+  - **System Settings**: When previewing in settings
+  - **SaverTest**: When testing in Xcode
+
+### Viewing Logs
+1. Open **Console.app** (Applications > Utilities > Console)
+2. In the search field, filter by: `SSM (`
+3. This will show all screensaver logs with format: `SSM (P:12345): init (1/2): ...`
+
+This logging system helps identify issues with multi-monitor setups, process lifecycle problems, and framework bugs.
+
 ## About Tahoe (macOS 26)
 
 macOS 26 (Tahoe) introduced new issues with screen savers, particularly around the `isPreview` parameter behavior. Unlike previous versions where this bug could be worked around, the Tahoe bug currently has no known workaround.
