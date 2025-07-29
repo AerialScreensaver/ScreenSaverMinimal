@@ -22,6 +22,9 @@ struct Preferences {
     
     @SimpleStorage(key: "EnableExitFixOnWillStop", defaultValue: false)
     static var enableExitFixOnWillStop: Bool
+    
+    @SimpleStorage(key: "TahoeIsPreviewFix", defaultValue: false)
+    static var tahoeIsPreviewFix: Bool
 }
 
 // MARK: - Helpers

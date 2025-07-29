@@ -41,12 +41,6 @@ struct ConfigurationView: View {
                             .font(.title3).padding(.top, 5)
                     }
                     .help("Logs each animateOneFrame() call to Console.app")
-                    
-                    Toggle(isOn: $viewModel.enableExitFixOnWillStop) {
-                        Text("Enable Exit Fix on willStop")
-                            .font(.title3).padding(.top, 5)
-                    }
-                    .help("Exits the screensaver process 2 seconds after receiving willStop notification")
                 }
                 
                 Section("About logs") {
@@ -54,6 +48,20 @@ struct ConfigurationView: View {
                         .font(.body)
                         .foregroundColor(.secondary)
                         .padding(.vertical, 8)
+                }
+                
+                Section("Workarounds") {
+                    Toggle(isOn: $viewModel.enableExitFixOnWillStop) {
+                        Text("Enable Exit Fix on willStop")
+                            .font(.title3).padding(.top, 5)
+                    }
+                    .help("Exits the screensaver process 2 seconds after receiving willStop notification")
+                    
+                    Toggle(isOn: $viewModel.tahoeIsPreviewFix) {
+                        Text("Tahoe isPreview fix (FB19201567)")
+                            .font(.title3).padding(.top, 5)
+                    }
+                    .help("Enables workaround for isPreview detection issue on macOS Tahoe")
                 }
             }
             .formStyle(.grouped)
@@ -79,7 +87,7 @@ struct ConfigurationView: View {
         }
         // Buttons accept tint, but not Toggles 🤷
         //.tint(Color("AccentColor"))
-        .frame(width: 450, height: 550)
+        .frame(width: 450, height: 640)
         .background(Color(nsColor: NSColor.windowBackgroundColor))
     }
     

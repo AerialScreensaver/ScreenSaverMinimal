@@ -3,47 +3,37 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		03A485271B644187008A2D6A /* ScreenSaverMinimalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */; };
-		03F3BD4324A2462600F7CD7A /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F3BD4224A2462500F7CD7A /* Preferences.swift */; };
-		03F3BD4424A2462600F7CD7A /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F3BD4224A2462500F7CD7A /* Preferences.swift */; };
 		03F9545E1B695E0A00E47ED7 /* thumbnail.png in Resources */ = {isa = PBXBuildFile; fileRef = 03F9545D1B695E0A00E47ED7 /* thumbnail.png */; };
 		ACD891861DC38B790019C16F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ACD891851DC38B790019C16F /* Assets.xcassets */; };
 		ACD8918E1DC38C4B0019C16F /* ScreenSaverMinimalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */; };
-		F0156A6B2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A6A2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift */; };
-		F0156A6C2E33F62600C4EA3C /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A682E33F62600C4EA3C /* ConfigurationView.swift */; };
-		F0156A6D2E33F62600C4EA3C /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A692E33F62600C4EA3C /* ConfigurationViewModel.swift */; };
-		F0156A6E2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A6A2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift */; };
-		F0156A6F2E33F62600C4EA3C /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A682E33F62600C4EA3C /* ConfigurationView.swift */; };
-		F0156A702E33F62600C4EA3C /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A692E33F62600C4EA3C /* ConfigurationViewModel.swift */; };
 		F0156A8A2E353CD900C4EA3C /* ScreenSaverRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A892E353CD900C4EA3C /* ScreenSaverRepresentable.swift */; };
 		F0156A8B2E353CD900C4EA3C /* SaverTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A872E353CD900C4EA3C /* SaverTestApp.swift */; };
 		F0156A8C2E353CD900C4EA3C /* SaverTestContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0156A882E353CD900C4EA3C /* SaverTestContentView.swift */; };
 		F05A779B2E33B9EA0095CAF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ACD891851DC38B790019C16F /* Assets.xcassets */; };
-		F0EAC97A2E329E14008427CE /* InstanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EAC9792E329E14008427CE /* InstanceTracker.swift */; };
-		F0EAC97B2E329E14008427CE /* InstanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EAC9792E329E14008427CE /* InstanceTracker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		03A485181B644145008A2D6A /* ScreenSaverMinimal.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenSaverMinimal.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		03A4851C1B644145008A2D6A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenSaverMinimalView.swift; sourceTree = "<group>"; };
-		03F3BD4224A2462500F7CD7A /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		03F9545D1B695E0A00E47ED7 /* thumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumbnail.png; sourceTree = "<group>"; };
 		ACD891811DC38B790019C16F /* SaverTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SaverTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACD891851DC38B790019C16F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD8918A1DC38B790019C16F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F0156A682E33F62600C4EA3C /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
-		F0156A692E33F62600C4EA3C /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
-		F0156A6A2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIConfigureSheetController.swift; sourceTree = "<group>"; };
 		F0156A872E353CD900C4EA3C /* SaverTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaverTestApp.swift; sourceTree = "<group>"; };
 		F0156A882E353CD900C4EA3C /* SaverTestContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaverTestContentView.swift; sourceTree = "<group>"; };
 		F0156A892E353CD900C4EA3C /* ScreenSaverRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSaverRepresentable.swift; sourceTree = "<group>"; };
-		F0EAC9792E329E14008427CE /* InstanceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceTracker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F0156A962E38FF3900C4EA3C /* Configuration */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Configuration; sourceTree = "<group>"; };
+		F0156A972E38FF4C00C4EA3C /* Helpers */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Helpers; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		03A485141B644145008A2D6A /* Frameworks */ = {
@@ -84,12 +74,9 @@
 		03A4851A1B644145008A2D6A /* ScreenSaverMinimal */ = {
 			isa = PBXGroup;
 			children = (
-				F0156A682E33F62600C4EA3C /* ConfigurationView.swift */,
-				F0156A692E33F62600C4EA3C /* ConfigurationViewModel.swift */,
-				F0EAC9792E329E14008427CE /* InstanceTracker.swift */,
-				03F3BD4224A2462500F7CD7A /* Preferences.swift */,
+				F0156A962E38FF3900C4EA3C /* Configuration */,
+				F0156A972E38FF4C00C4EA3C /* Helpers */,
 				03A485261B644187008A2D6A /* ScreenSaverMinimalView.swift */,
-				F0156A6A2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift */,
 				03A4851B1B644145008A2D6A /* Supporting Files */,
 			);
 			path = ScreenSaverMinimal;
@@ -143,6 +130,10 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				F0156A962E38FF3900C4EA3C /* Configuration */,
+				F0156A972E38FF4C00C4EA3C /* Helpers */,
+			);
 			name = ScreenSaverMinimal;
 			productName = SwiftCircle;
 			productReference = 03A485181B644145008A2D6A /* ScreenSaverMinimal.saver */;
@@ -160,6 +151,10 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F0156A962E38FF3900C4EA3C /* Configuration */,
+				F0156A972E38FF4C00C4EA3C /* Helpers */,
 			);
 			name = SaverTest;
 			productName = SaverTest;
@@ -271,11 +266,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				03A485271B644187008A2D6A /* ScreenSaverMinimalView.swift in Sources */,
-				F0EAC97B2E329E14008427CE /* InstanceTracker.swift in Sources */,
-				F0156A6B2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift in Sources */,
-				F0156A6C2E33F62600C4EA3C /* ConfigurationView.swift in Sources */,
-				F0156A6D2E33F62600C4EA3C /* ConfigurationViewModel.swift in Sources */,
-				03F3BD4324A2462600F7CD7A /* Preferences.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,11 +277,6 @@
 				F0156A8A2E353CD900C4EA3C /* ScreenSaverRepresentable.swift in Sources */,
 				F0156A8B2E353CD900C4EA3C /* SaverTestApp.swift in Sources */,
 				F0156A8C2E353CD900C4EA3C /* SaverTestContentView.swift in Sources */,
-				F0EAC97A2E329E14008427CE /* InstanceTracker.swift in Sources */,
-				03F3BD4424A2462600F7CD7A /* Preferences.swift in Sources */,
-				F0156A6E2E33F62600C4EA3C /* SwiftUIConfigureSheetController.swift in Sources */,
-				F0156A6F2E33F62600C4EA3C /* ConfigurationView.swift in Sources */,
-				F0156A702E33F62600C4EA3C /* ConfigurationViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,7 +409,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.ScreenSaverMinimal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -448,7 +433,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.ScreenSaverMinimal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -476,7 +461,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.SaverTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -502,7 +487,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.aerialscreensaver.SaverTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

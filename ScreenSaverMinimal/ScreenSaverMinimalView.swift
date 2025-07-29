@@ -12,17 +12,7 @@ import SwiftUI
 import os.log
 import Darwin
 import Quartz
-
-// Helper to log to Console
-// Open Console.app to see the logs and filter by "SSM (P:"
-extension OSLog {
-    static let screenSaver = OSLog(subsystem: Bundle.main.bundleIdentifier ?? "ScreenSaverMinimal", category: "Screensaver")
-    
-    static func info(_ message: String) {
-        let pid = ProcessInfo.processInfo.processIdentifier
-        os_log("SSM (P:%d): %{public}@", log: .screenSaver, type: .default, pid, message)
-    }
-}
+import AppKit
 
 class ScreenSaverMinimalView : ScreenSaverView {
     
@@ -37,62 +27,16 @@ class ScreenSaverMinimalView : ScreenSaverView {
     private var willStopObserver: NSObjectProtocol?
     private var redrawTimer: Timer?
     private var isAnimationStarted: Bool = false
+    private var systemSettingsCheckTimer: Timer?
+    private var lastSystemSettingsCheck: Date = Date()
     
     // Check if we're running in the SaverTest app
     private var isRunningInApp: Bool {
         return InstanceTracker.isRunningInApp
     }
     
-    private func getVersionString() -> String {
-        let bundle = Bundle(for: type(of: self))
-        let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
-        let buildDate = bundle.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
-        return "v\(version) (\(buildDate))"
-    }
-    
     private func instanceInfo() -> String {
-        return "(\(instanceNumber)/\(InstanceTracker.shared.totalInstances))"
-    }
-    
-    private func formatFrame(_ frame: NSRect) -> String {
-        return "(x:\(frame.origin.x), y:\(frame.origin.y), w:\(frame.size.width), h:\(frame.size.height))"
-    }
-    
-    private static func isScreenLocked() -> Bool {
-        guard let dict = CGSessionCopyCurrentDictionary() as? [String: Any] else {
-            return false
-        }
-        
-        let isLocked = dict["CGSSessionScreenIsLocked"] as? Bool ?? false
-        return isLocked
-    }
-    
-    private func logProcessInfo() {
-        // Current process info
-        let processInfo = ProcessInfo.processInfo
-        let currentPID = processInfo.processIdentifier
-        let processName = processInfo.processName
-        let processPath = processInfo.arguments.first ?? "unknown"
-        
-        // Parent process info
-        let parentPID = getppid()
-        var parentName = "unknown"
-        var parentBundleID = "unknown"
-        
-        if let parentApp = NSRunningApplication(processIdentifier: parentPID) {
-            parentName = parentApp.localizedName ?? "unknown"
-            parentBundleID = parentApp.bundleIdentifier ?? "unknown"
-        }
-        
-        // Bundle context
-        let mainBundle = Bundle.main
-        let ourBundle = Bundle(for: type(of: self))
-        
-        OSLog.info("init \(instanceInfo()): Process Info:")
-        OSLog.info("  Current: PID=\(currentPID), name=\(processName), path=\(processPath)")
-        OSLog.info("  Parent: PID=\(parentPID), name=\(parentName), bundleID=\(parentBundleID)")
-        OSLog.info("  MainBundle: \(mainBundle.bundleIdentifier ?? "nil") at \(mainBundle.bundlePath)")
-        OSLog.info("  OurBundle: \(ourBundle.bundleIdentifier ?? "nil") at \(ourBundle.bundlePath)")
+        return ScreenSaverUtilities.instanceInfo(instanceNumber)
     }
     
     override init(frame: NSRect, isPreview: Bool) {
@@ -100,7 +44,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
         instanceNumber = 0 // Temporary value
         
         // Check and log screen lock status for debugging
-        let screenLocked = ScreenSaverMinimalView.isScreenLocked()
+        let screenLocked = ScreenSaverUtilities.isScreenLocked()
         OSLog.info("init: CGSSessionScreenIsLocked = \(screenLocked)")
         
         var preview = isPreview
@@ -113,14 +57,20 @@ class ScreenSaverMinimalView : ScreenSaverView {
             actualIsPreview = isPreview
         } else if #available(macOS 26.0, *) {
             // Tahoe - use screen lock detection (simple!)
-            if screenLocked {
-                // Screen is locked = actual screensaver
-                preview = false
-                actualIsPreview = false
+            if Preferences.tahoeIsPreviewFix {
+                if screenLocked {
+                    // Screen is locked = actual screensaver
+                    preview = false
+                    actualIsPreview = false
+                } else {
+                    // Screen not locked = preview mode
+                    preview = true
+                    actualIsPreview = true
+                }
             } else {
-                // Screen not locked = preview mode
-                preview = true
-                actualIsPreview = true
+                // Use original isPreview value if fix is disabled
+                preview = isPreview
+                actualIsPreview = isPreview
             }
         } else {
             // Pre-Tahoe - existing frame size logic
@@ -142,7 +92,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
         
         // Always register with the tracker and log
         instanceNumber = InstanceTracker.shared.registerInstance(self)
-        OSLog.info("init \(instanceInfo()): frame=\(formatFrame(frame)), isPreview=\(isPreview), actualIsPreview=\(actualIsPreview)")
+        OSLog.info("init \(instanceInfo()): frame=\(ScreenSaverUtilities.formatFrame(frame)), isPreview=\(isPreview), actualIsPreview=\(actualIsPreview)")
         
         // Handle Tahoe ghost instances
         if !InstanceTracker.isRunningInApp, #available(macOS 26.0, *) {
@@ -153,10 +103,10 @@ class ScreenSaverMinimalView : ScreenSaverView {
         }
         
         // Log process information for debugging
-        logProcessInfo()
+        SystemDetection.logProcessInfo(instanceNumber: instanceNumber)
         
-        // Register for willStop notification if the preference is enabled AND not in app mode
-        if Preferences.enableExitFixOnWillStop && !isRunningInApp {
+        // Register for willStop notification if the preference is enabled AND not in app mode AND not in preview mode
+        if Preferences.enableExitFixOnWillStop && !isRunningInApp && !actualIsPreview {
             willStopObserver = DistributedNotificationCenter.default().addObserver(
                 forName: NSNotification.Name("com.apple.screensaver.willstop"),
                 object: nil,
@@ -176,8 +126,8 @@ class ScreenSaverMinimalView : ScreenSaverView {
         instanceNumber = InstanceTracker.shared.registerInstance(self)
         OSLog.info("init(coder:) \(instanceInfo()):")
         
-        // Register for willStop notification if the preference is enabled AND not in app mode
-        if Preferences.enableExitFixOnWillStop && !isRunningInApp {
+        // Register for willStop notification if the preference is enabled AND not in app mode AND not in preview mode
+        if Preferences.enableExitFixOnWillStop && !isRunningInApp && !actualIsPreview {
             willStopObserver = DistributedNotificationCenter.default().addObserver(
                 forName: NSNotification.Name("com.apple.screensaver.willstop"),
                 object: nil,
@@ -236,7 +186,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
         super.viewDidMoveToWindow()
         
         if let window = self.window {
-            OSLog.info("viewDidMoveToWindow \(instanceInfo()): window=\(window), frame=\(formatFrame(window.frame)), screen=\(window.screen?.localizedName ?? "unknown")")
+            OSLog.info("viewDidMoveToWindow \(instanceInfo()): window=\(window), frame=\(ScreenSaverUtilities.formatFrame(window.frame)), screen=\(window.screen?.localizedName ?? "unknown")")
         } else {
             OSLog.info("viewDidMoveToWindow \(instanceInfo()): window=nil (removed from hierarchy)")
         }
@@ -254,18 +204,18 @@ class ScreenSaverMinimalView : ScreenSaverView {
     
     override func viewWillStartLiveResize() {
         super.viewWillStartLiveResize()
-        OSLog.info("viewWillStartLiveResize \(instanceInfo()): frame=\(formatFrame(self.window?.frame ?? .zero))")
+        OSLog.info("viewWillStartLiveResize \(instanceInfo()): frame=\(ScreenSaverUtilities.formatFrame(self.window?.frame ?? .zero))")
     }
     
     override func viewDidEndLiveResize() {
         super.viewDidEndLiveResize()
-        OSLog.info("viewDidEndLiveResize \(instanceInfo()): frame=\(formatFrame(self.window?.frame ?? .zero))")
+        OSLog.info("viewDidEndLiveResize \(instanceInfo()): frame=\(ScreenSaverUtilities.formatFrame(self.window?.frame ?? .zero))")
     }
     
 
     override func draw(_ rect: NSRect) {
         if Preferences.logDrawCalls {
-            OSLog.info("draw \(instanceInfo()): rect=\(formatFrame(rect))")
+            OSLog.info("draw \(instanceInfo()): rect=\(ScreenSaverUtilities.formatFrame(rect))")
         }
         // Fill entire rect with border color
         Preferences.canvasColor.nsColor.set()
@@ -333,7 +283,7 @@ class ScreenSaverMinimalView : ScreenSaverView {
         }
         
         // Draw version info in bottom right corner
-        let versionText = getVersionString()
+        let versionText = ScreenSaverUtilities.getVersionString()
         let versionAttributes: [NSAttributedString.Key: Any] = [
             .font: NSFont.boldSystemFont(ofSize: 16),
             .foregroundColor: NSColor.white
@@ -352,10 +302,23 @@ class ScreenSaverMinimalView : ScreenSaverView {
             OSLog.info("animateOneFrame \(instanceInfo()):")
         }
         
-        window!.disableFlushing()
-        
-        window!.enableFlushing()
+        // Check System Settings if we're in preview mode and the fix is enabled
+        if actualIsPreview && Preferences.tahoeIsPreviewFix {
+            let now = Date()
+            // Check every second
+            if now.timeIntervalSince(lastSystemSettingsCheck) >= 1.0 {
+                lastSystemSettingsCheck = now
+                if !SystemDetection.isSystemSettingsRunning() {
+                    // System Settings is not running, exit after 0.5 seconds
+                    OSLog.info("animateOneFrame \(instanceInfo()): System Settings closed, scheduling exit in 0.5 seconds")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        exit(0)
+                    }
+                }
+            }
+        }
     }
+    
     
     private func handleWillStopNotification() {
         OSLog.info("handleWillStopNotification \(instanceInfo()): Received willStop notification")

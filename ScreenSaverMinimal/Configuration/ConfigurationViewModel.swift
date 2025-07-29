@@ -15,6 +15,7 @@ class ConfigurationViewModel: ObservableObject {
     @Published var logDrawCalls: Bool = false
     @Published var logAnimateOneFrameCalls: Bool = false
     @Published var enableExitFixOnWillStop: Bool = false
+    @Published var tahoeIsPreviewFix: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -29,13 +30,14 @@ class ConfigurationViewModel: ObservableObject {
         logDrawCalls = Preferences.logDrawCalls
         logAnimateOneFrameCalls = Preferences.logAnimateOneFrameCalls
         enableExitFixOnWillStop = Preferences.enableExitFixOnWillStop
+        tahoeIsPreviewFix = Preferences.tahoeIsPreviewFix
     }
     
     private func setupBindings() {
         // Save canvas color changes
         $canvasColor
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-            .sink { [weak self] swiftUIColor in
+            .sink { swiftUIColor in
                 // Convert SwiftUI Color to NSColor for macOS 15+
                 let nsColor = NSColor(swiftUIColor)
                 Preferences.canvasColor = PreferenceColor(nsColor: nsColor)
@@ -60,6 +62,13 @@ class ConfigurationViewModel: ObservableObject {
         $enableExitFixOnWillStop
             .sink { value in
                 Preferences.enableExitFixOnWillStop = value
+            }
+            .store(in: &cancellables)
+        
+        // Save Tahoe isPreview fix changes
+        $tahoeIsPreviewFix
+            .sink { value in
+                Preferences.tahoeIsPreviewFix = value
             }
             .store(in: &cancellables)
     }
