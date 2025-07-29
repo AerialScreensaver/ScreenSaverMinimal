@@ -52,7 +52,7 @@ struct ConfigurationView: View {
                 
                 Section("Workarounds") {
                     Toggle(isOn: $viewModel.enableExitFixOnWillStop) {
-                        Text("Enable Exit Fix on willStop")
+                        Text("Enable Exit Fix on willStop (FB19204084)")
                             .font(.title3).padding(.top, 5)
                     }
                     .help("Exits the screensaver process 2 seconds after receiving willStop notification")

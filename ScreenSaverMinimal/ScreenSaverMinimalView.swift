@@ -105,8 +105,8 @@ class ScreenSaverMinimalView : ScreenSaverView {
         // Log process information for debugging
         SystemDetection.logProcessInfo(instanceNumber: instanceNumber)
         
-        // Register for willStop notification if the preference is enabled AND not in app mode AND not in preview mode
-        if Preferences.enableExitFixOnWillStop && !isRunningInApp && !actualIsPreview {
+        // Register for willStop notification for debugging (not in app mode AND not in preview mode)
+        if !isRunningInApp && !actualIsPreview {
             willStopObserver = DistributedNotificationCenter.default().addObserver(
                 forName: NSNotification.Name("com.apple.screensaver.willstop"),
                 object: nil,
@@ -126,8 +126,8 @@ class ScreenSaverMinimalView : ScreenSaverView {
         instanceNumber = InstanceTracker.shared.registerInstance(self)
         OSLog.info("init(coder:) \(instanceInfo()):")
         
-        // Register for willStop notification if the preference is enabled AND not in app mode AND not in preview mode
-        if Preferences.enableExitFixOnWillStop && !isRunningInApp && !actualIsPreview {
+        // Register for willStop notification for debugging (not in app mode AND not in preview mode)
+        if !isRunningInApp && !actualIsPreview {
             willStopObserver = DistributedNotificationCenter.default().addObserver(
                 forName: NSNotification.Name("com.apple.screensaver.willstop"),
                 object: nil,
@@ -326,6 +326,11 @@ class ScreenSaverMinimalView : ScreenSaverView {
         // Don't exit if we're in preview mode
         if actualIsPreview {
             OSLog.info("handleWillStopNotification \(instanceInfo()): Ignoring willStop in preview mode")
+            return
+        }
+        
+        // Only proceed with exit if the preference is enabled
+        if !Preferences.enableExitFixOnWillStop {
             return
         }
         
